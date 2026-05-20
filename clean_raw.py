@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-清理 RAW 文件夹中没有对应 JPG 的 RAW 文件。
+清理 ARW 文件夹中没有对应 JPG 的 ARW 文件。
 
 目录结构假设：
     A/
     ├── JPG/   (存放 .jpg / .jpeg 文件)
-    └── RAW/   (存放 .raw 文件)
+    └── ARW/   (存放 .ARW 文件)
 
 用法：
     python clean_raw.py /absolute/path/to/A
@@ -33,7 +33,7 @@ def collect_stems(folder: Path, extensions):
 
 
 def find_orphan_raws(jpg_dir: Path, raw_dir: Path, jpg_exts, raw_exts):
-    """找到 RAW 目录中没有同名 JPG 的文件列表。"""
+    """找到 ARW 目录中没有同名 JPG 的文件列表。"""
     jpg_stems = collect_stems(jpg_dir, jpg_exts)
     raw_exts_lower = {e.lower().lstrip(".") for e in raw_exts}
 
@@ -47,17 +47,17 @@ def find_orphan_raws(jpg_dir: Path, raw_dir: Path, jpg_exts, raw_exts):
 
 def parse_args(argv=None):
     parser = argparse.ArgumentParser(
-        description="删除 RAW 文件夹中没有对应 JPG 的 RAW 文件。"
+        description="删除 ARW 文件夹中没有对应 JPG 的 ARW 文件。"
     )
     parser.add_argument(
         "root",
-        help="目录 A 的绝对路径，里面应包含 JPG 与 RAW 两个子目录。",
+        help="目录 A 的绝对路径，里面应包含 JPG 与 ARW 两个子目录。",
     )
     parser.add_argument(
         "--jpg-dir", default="JPG", help="JPG 子目录名 (默认: JPG)"
     )
     parser.add_argument(
-        "--raw-dir", default="RAW", help="RAW 子目录名 (默认: RAW)"
+        "--raw-dir", default="ARW", help="ARW 子目录名 (默认: ARW)"
     )
     parser.add_argument(
         "--jpg-ext",
@@ -68,8 +68,8 @@ def parse_args(argv=None):
     parser.add_argument(
         "--raw-ext",
         nargs="+",
-        default=["raw"],
-        help="视为 RAW 的扩展名列表 (默认: raw)。"
+        default=["ARW"],
+        help="视为 ARW 的扩展名列表 (默认: ARW)。"
              "若你的相机是 NEF/CR2/ARW 等，可在此覆盖。",
     )
     parser.add_argument(
@@ -94,7 +94,7 @@ def main(argv=None) -> int:
     jpg_dir = root / args.jpg_dir
     raw_dir = root / args.raw_dir
 
-    for d, label in [(jpg_dir, "JPG"), (raw_dir, "RAW")]:
+    for d, label in [(jpg_dir, "JPG"), (raw_dir, "ARW")]:
         if not d.is_dir():
             print(f"[错误] 找不到 {label} 子目录: {d}", file=sys.stderr)
             return 2
@@ -102,7 +102,7 @@ def main(argv=None) -> int:
     orphans = find_orphan_raws(jpg_dir, raw_dir, args.jpg_ext, args.raw_ext)
 
     if not orphans:
-        print("无需删除：所有 RAW 文件都有对应的 JPG。")
+        print("无需删除：所有 ARW 文件都有对应的 JPG。")
         return 0
 
     action = "[预览]" if args.dry_run else "[删除]"
@@ -120,7 +120,7 @@ def main(argv=None) -> int:
             failed += 1
 
     if args.dry_run:
-        print(f"\n共发现 {len(orphans)} 个孤立 RAW 文件 (未实际删除)。")
+        print(f"\n共发现 {len(orphans)} 个孤立 ARW 文件 (未实际删除)。")
     else:
         print(f"\n已删除 {deleted} 个文件，失败 {failed} 个。")
 
